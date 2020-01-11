@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'quotes_widget.dart';
+import 'package:flutter_quotes_app/quotes_widget.dart';
+
 
 void main() => runApp(MyApp());
 
