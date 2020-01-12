@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'quote_model.dart';
 import 'api_call.dart';
 
@@ -14,7 +15,10 @@ class QuotesHome extends StatelessWidget {
           if (snapshot.hasData) {
             return QuotePage(quotes:snapshot.data);
           } else {
-            return Center(child: CircularProgressIndicator());
+            return SpinKitDoubleBounce(
+              color: Colors.white,
+              size: 100.0,
+            );
           }
         },
       ),
