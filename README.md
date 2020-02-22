@@ -6,4 +6,4 @@ A flutter quotes app with inspiring quotes.
 
 Swipe right or left to read the previous or next quote.
 
-Check the working version on this link:
+Check the working version on this link:[flutter quotes app](https://flutter-pwa.web.app/#/)
