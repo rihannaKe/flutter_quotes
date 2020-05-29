@@ -15,10 +15,23 @@ class QuotesHome extends StatelessWidget {
           if (snapshot.hasData) {
             return QuotePage(quotes:snapshot.data);
           } else {
-            return SpinKitDoubleBounce(
-              color: Colors.white,
-              size: 100.0,
-            );
+             switch (snapshot.connectionState) { 
+                case ConnectionState.none:
+                  return QuoteWidget(
+                    text: ':( Sorry looks like you have no connection!!!',
+                    author: 'the network'
+                  );
+                case ConnectionState.waiting:
+                  return SpinKitDoubleBounce(
+                    color: Colors.blueGrey,
+                    size: 100.0,
+                  );
+                default:
+                  return QuoteWidget(
+                    text: ':( Sorry looks like you have network error!!!',
+                    author: 'the network'
+                );
+             }
           }
         },
       ),

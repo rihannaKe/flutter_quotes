@@ -6,12 +6,11 @@ const url = "https://type.fit/api/quotes";
 
 List<Quote> parseProducts(String responseBody) {
   final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-  return parsed.map<Quote>((json) =>Quote.fromJson(json)).toList();
+  return parsed.map<Quote>((json) => Quote.fromJson(json)).toList();
 }
 
 Future<List<Quote>> getQuotes() async {
-  final response =
-  await http.get(url, headers: {"Accept": "application/json"});
+  final response = await http.get(url, headers: {"Accept": "application/json"});
   if (response.statusCode == 200) {
     return parseProducts(response.body);
   } else {
@@ -19,11 +18,9 @@ Future<List<Quote>> getQuotes() async {
   }
 }
 
-
 Future<Quote> getQuote() async {
   String url = 'https://quotes.rest/qod.json';
-  final response =
-  await http.get(url, headers: {"Accept": "application/json"});
+  final response = await http.get(url, headers: {"Accept": "application/json"});
 
   if (response.statusCode == 200) {
     return Quote.fromJson(json.decode(response.body));
@@ -31,5 +28,3 @@ Future<Quote> getQuote() async {
     throw Exception('Failed to load post');
   }
 }
-
-
