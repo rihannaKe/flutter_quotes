@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'quote_model.dart';
 import 'api_call.dart';
-
+import 'constants.dart' as Constants;
 
 class QuotesHome extends StatelessWidget {
   @override
@@ -12,7 +12,7 @@ class QuotesHome extends StatelessWidget {
         future: getQuotes(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return QuotePage(quotes:snapshot.data);
+            return QuotePage(quotes: snapshot.data);
           } else {
             return Center(child: CircularProgressIndicator());
           }
@@ -35,12 +35,16 @@ class _QuotePageState extends State<QuotePage> {
   PageController pageViewController;
   PageStorage page;
   double currentPageValue = 0.0;
+  Color clrBackGround;
+  Color clrQuote;
+  Color clrAuthor;
 
   @override
   void initState() {
     super.initState();
     pageViewController =
         PageController(initialPage: Random().nextInt(widget.quotes.length));
+    
     pageViewController.addListener(() {
       setState(() {
         currentPageValue = pageViewController.page;
@@ -57,20 +61,20 @@ class _QuotePageState extends State<QuotePage> {
   Widget build(BuildContext context) {
     return SizedBox.expand(
       child: new Container(
-        color: Colors.white,
+        color: Colors.black,
         child: PageView.builder(
           physics: BouncingScrollPhysics(),
           controller: pageViewController,
           itemBuilder: (context, position) {
+            clrBackGround = Constants.BACK_COLORS_LIST[Random().nextInt(15)];
+            clrQuote = Constants.QUOTE_TEXT_COLOR;
+            clrAuthor = Constants.QUOTE_AUTHOR_COLOR;
             if (position == currentPageValue.floor()) {
               return Transform(
                 transform: Matrix4.identity()
                   ..rotateX(currentPageValue - position),
                 child: Stack(fit: StackFit.expand, children: <Widget>[
-                  QuoteWidget(
-                    text: widget.quotes[position].text,
-                    author: widget.quotes[position].author,
-                  ),
+                  buildQuoteWidget(widget.quotes[position].text,widget.quotes[position].author)
                 ]),
               );
             } else if (position == currentPageValue.floor() + 1) {
@@ -78,19 +82,13 @@ class _QuotePageState extends State<QuotePage> {
                 transform: Matrix4.identity()
                   ..rotateX(currentPageValue - position),
                 child: Stack(fit: StackFit.expand, children: <Widget>[
-                  QuoteWidget(
-                    text: widget.quotes[position].text,
-                    author: widget.quotes[position].author,
-                  ),
+                  buildQuoteWidget(widget.quotes[position].text,widget.quotes[position].author)
                 ]),
               );
             } else {
               return Container(
                 child: Stack(fit: StackFit.expand, children: <Widget>[
-                  QuoteWidget(
-                    text: widget.quotes[position].text,
-                    author: widget.quotes[position].author,
-                  ),
+                  buildQuoteWidget(widget.quotes[position].text,widget.quotes[position].author)
                 ]),
               );
             }
@@ -100,65 +98,76 @@ class _QuotePageState extends State<QuotePage> {
       ),
     );
   }
+
+  Widget buildQuoteWidget(String quote, String author) {
+    return QuoteWidget(
+        text: quote,
+        author: author,
+        clrBackGround: clrBackGround,
+        clrQuote: clrQuote,
+        clrAuthor: clrAuthor);
+  }
 }
 
 class QuoteWidget extends StatelessWidget {
   final String text;
   final String author;
+  final Color clrQuote;
+  final Color clrAuthor;
+  final Color clrBackGround;
 
-  QuoteWidget({this.text, this.author});
-
-  Gradient backgroundGradientColor = LinearGradient(
-    begin: Alignment.topRight,
-    end: Alignment.bottomLeft,
-    stops: const [0.1, 0.4, 0.7, 0.9],
-    colors: [
-      Colors.white.withOpacity(1),
-      Colors.white.withOpacity(0.97),
-      Colors.white.withOpacity(0.70),
-      Colors.white.withOpacity(0.86),
-    ],
-  );
+  QuoteWidget(
+      {this.text,
+      this.author,
+      this.clrBackGround,
+      this.clrQuote,
+      this.clrAuthor});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Container(
-        margin: EdgeInsets.all(20),
-        padding: EdgeInsets.all(20.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black26, offset: Offset(0, 0), blurRadius: 24)
-          ],
-          gradient: backgroundGradientColor,
-        ),
-        child: Align(
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(text,
-                  style: TextStyle(
-                      color: Colors.blueGrey[700],
-                      fontFamily: 'Dancing script',
-                      fontSize: 40.0)),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 25.0),
-              ),
-              Text(author,
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                      fontFamily: 'Dancing script',
-                      color: Color(0xffaaaaaa),
-                      fontSize: 25.0)),
-              Padding(
-                padding: EdgeInsets.all(30.0),
-              ),
+    return SafeArea(
+          child: Container(
+        color: Colors.black,
+        child: Container(
+          margin: EdgeInsets.all(20),
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.blueGrey, offset: Offset(0, 0), blurRadius: 24)
             ],
+            // gradient: backgroundGradientColor,
+            color: clrBackGround,
+          ),
+          child: Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(text,
+                      style: TextStyle(
+                          color: clrQuote,
+                          fontFamily: 'Dancing script',
+                          fontSize: 40.0)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 25.0),
+                  ),
+                  Text(author,
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                          fontFamily: 'Dancing script',
+                          color: clrAuthor,
+                          fontSize: 25.0)),
+                  Padding(
+                    padding: EdgeInsets.all(30.0),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
